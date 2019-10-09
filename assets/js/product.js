@@ -19,15 +19,14 @@ storefrontApp.controller('productController', ['$rootScope', '$scope', '$window'
         $scope.starsLimit = [1, 2, 3, 4, 5];
         $scope.newReview = {};
 
-        $scope.getStarClass = function (i) {
-            var rating = $scope.selectedVariation.rating;
+        $scope.getStarClass = function (i, rating) {
             if ((rating - i) >= 0.3 && (rating - i) <= 0.7) {
-                return 'fa-star-half-o active-star';
+                return 'fa fa-star-half-o active-star';
             }
             if (i <= rating) {
-                return 'fa-star active-star';
+                return 'fa fa-star active-star';
             }
-            return 'fa-star-o';
+            return 'fa fa-star-o';
         };
 
         $scope.starClick = function (index) {

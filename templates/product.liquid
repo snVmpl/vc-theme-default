@@ -33,7 +33,7 @@
         <h2 itemprop="name">{{ product.title }}</h2>
 
         {%raw%}
-        <i ng-repeat="i in starsLimit" class="fa {{getStarClass(i)}}" aria-hidden="true"></i>
+        <i ng-repeat="i in starsLimit" class="{{getStarClass(i, selectedVariation.rating)}}" aria-hidden="true"></i>
         {%endraw%}
 
         <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
@@ -177,7 +177,7 @@
             </div>
                 <dt>{{ 'products.product.customer_review.rating' | translate }}</dt>
             <div class="review-text">
-                <i ng-repeat="(i, star) in starsLimit" class="fa" ng-class="{'fa-star active-star': i < review.ratingNumber, 'fa-star-o' : i >= review.ratingNumber}" aria-hidden="true"></i>
+                <i ng-repeat="i in starsLimit" class="{{getStarClass(i, review.ratingNumber)}}" aria-hidden="true"></i>
             </div>
             <div>
                 <dt>{{ 'products.product.customer_review.pros' | translate }}</dt>
@@ -206,7 +206,7 @@
             </div>
                 <dt>{{ 'products.product.customer_review.rating' | translate }}</dt>
             <div class="review-text">
-                <i ng-repeat="i in starsLimit" class="fa fa-star-o new-review-star" ng-click="starClick(i)" ng-class="{ 'fa-star active-star': newReview.rating >= i }" aria-hidden="true"></i>
+                <i ng-repeat="i in starsLimit" class="{{getStarClass(i, newReview.rating)}} new-review-star" ng-click="starClick(i)" aria-hidden="true"></i>
             </div>
             <div>
                 <dt>{{ 'products.product.customer_review.pros' | translate }}</dt>
