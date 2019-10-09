@@ -10,14 +10,14 @@
             <div class="grid-item large--eleven-twelfths text-center">
                 <div class="product-photo-container" id="productPhoto">
                     {% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
-                    <img ng-if="!product.primaryImage" id="productPhotoImg" ng-src="{{ featured_image | img_url: "348x348" }}" fallback-src="{{ featured_image | img_url }}" alt="{{ featured_image.alt | escape }}" {% if settings.product_image_zoom_enable %} data-zoom="{{ featured_image | img_url }}" {% endif %}>
+                    <img ng-if="!product.primaryImage" id="productPhotoImg" ng-src="{{ featured_image | img_url: '348x348' }}" fallback-src="{{ featured_image | img_url }}" alt="{{ featured_image.alt | escape }}" {% if settings.product_image_zoom_enable %} data-zoom="{{ featured_image | img_url }}" {% endif %}>
                 </div>
                 {% if product.images.size > 1 %}
                 <ul class="product-photo-thumbs grid-uniform" id="productThumbs">
                     {% for image in product.images %}
                     <li class="grid-item medium--down-one-quarter large--one-quarter">
                         <a href="{{ image.src | img_url }}" class="product-photo-thumb">
-                            <img ng-src="{{ image.src | img_url: "64x64" }}" fallback-src="{{ image.src | img_url }}" alt="{{ image.alt | escape }}">
+                            <img ng-src="{{ image.src | img_url: '64x64' }}" fallback-src="{{ image.src | img_url }}" alt="{{ image.alt | escape }}">
                         </a>
                     </li>
                     {% endfor %}
@@ -31,6 +31,10 @@
 
     <div class="grid-item large--three-fifths">
         <h2 itemprop="name">{{ product.title }}</h2>
+
+        {%raw%}
+        <i ng-repeat="i in starsLimit" class="fa {{getStarClass(i)}}" aria-hidden="true"></i>
+        {%endraw%}
 
         <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
 
@@ -113,7 +117,7 @@
 
             <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
 
-            <form action={{ '/cart/add' | absolute_url }}" method="post" enctype="multipart/form-data" id="addToCartForm">
+            <form action="{{ '/cart/add' | absolute_url }}" method="post" enctype="multipart/form-data" id="addToCartForm">
 
                 <div class="product-sku">
                     <div ng-repeat="(propName, props) in allVariationPropsMap">
@@ -162,6 +166,68 @@
         <div class="product-description rte" itemprop="description">
             {{ product.description }}
         </div>
+
+        {%raw%}
+        <h3>{{ 'products.product.customer_review.title' | translate }}</h3>
+        <div ng-if="selectedVariation.customerReviews" ng-repeat="review in selectedVariation.customerReviews">
+            <hr/>
+            <div>
+                <dt>{{ 'products.product.customer_review.author_nickname' | translate }}</dt>
+                <p class="review-text">{{review.authorNickname}}<p>
+            </div>
+                <dt>{{ 'products.product.customer_review.rating' | translate }}</dt>
+            <div class="review-text">
+                <i ng-repeat="(i, star) in starsLimit" class="fa" ng-class="{'fa-star active-star': i < review.ratingNumber, 'fa-star-o' : i >= review.ratingNumber}" aria-hidden="true"></i>
+            </div>
+            <div>
+                <dt>{{ 'products.product.customer_review.pros' | translate }}</dt>
+                <p class="review-text">{{ review.pros }}<p>
+                <dt>{{ 'products.product.customer_review.cons' | translate }}</dt>
+                <p class="review-text">{{ review.cons }}<p>
+            </div>
+            <div>
+                <dt>{{ 'products.product.customer_review.content' | translate }}</dt>
+                <p class="review-text">{{ review.content }}<p>
+            </div>
+            <div>
+                <dt>{{ 'products.product.customer_review.created_date' | translate }}</dt>
+                <time class="review-text" pubdate datetime="{{ review.createdDate | date: 'medium' }}">
+                    <em class="text-light review-text">{{ review.createdDate | date: 'medium' }}</em>
+                </time>
+            </div>  
+        </div>
+
+        <div class="vc-form">
+        <hr/>
+        <h3>{{ 'products.product.customer_review.new_review_title' | translate }}</h3>
+            <div>
+                <dt>{{ 'products.product.customer_review.author_nickname' | translate }}</dt>
+                <input class="review-text form-input" ng-model="newReview.authorNickname"/>
+            </div>
+                <dt>{{ 'products.product.customer_review.rating' | translate }}</dt>
+            <div class="review-text">
+                <i ng-repeat="i in starsLimit" class="fa fa-star-o new-review-star" ng-click="starClick(i)" ng-class="{ 'fa-star active-star': newReview.rating >= i }" aria-hidden="true"></i>
+            </div>
+            <div>
+                <dt>{{ 'products.product.customer_review.pros' | translate }}</dt>
+                <input class="review-text form-input" ng-model="newReview.pros"/>
+                <dt>{{ 'products.product.customer_review.cons' | translate }}</dt>
+                <input class="review-text form-input" ng-model="newReview.cons"/>
+            </div>
+            <div>
+                <dt>{{ 'products.product.customer_review.content' | translate }}</dt>
+                <input class="review-text form-input" ng-model="newReview.content"/>
+            </div>
+            <div class="btn-block">
+                <button type="button" id="addCustomerReview" class="btn btn-clearfix add-review" ng-click="addCustomerReview()">
+                    <span class="icon"></span>
+                    <span>{{ 'products.product.customer_review.add_button' | translate }}</span>
+                </button>
+            </div>
+        </div> 
+        
+        {%endraw%}
+
         {% if settings.social_sharing_products %}
         {% include 'social-sharing' %}
         {% endif %}
@@ -186,19 +252,6 @@
                 </div>
             </div>
         </div>
-        {% endif %}
-
-        {% if product.customer_reviews.size > 0 %}
-        <h4>Customer reviews</h4>
-        {% for review in product.customer_reviews limit:5 %}
-        <p>
-            {{ review.content }}
-            <br>
-            <time pubdate datetime="{{ review.created_date | date: '%Y-%m-%d' }}">
-                <em class="text-light">{{ review.created_date | date: 'month_day_year' }}</em>
-            </time>
-        </p>
-        {% endfor %}
         {% endif %}
     </div>
 </div>

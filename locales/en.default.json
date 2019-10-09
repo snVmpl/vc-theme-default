@@ -728,7 +728,18 @@
             "add_to_cart": "Add to Cart",
             "details_tab": "Product details",
             "vat": "Inc VAT",
-            "subscription_period": "Subscription with a period:"
+            "subscription_period": "Subscription with a period:",
+            "customer_review": {
+                "title": "Customer reviews",
+                "author_nickname": "Author nickname",
+                "rating": "Stars rating",
+                "pros": "Pros",
+                "cons": "Cons",
+                "content": "Review",
+                "created_date": "Created date",
+                "add_button": "Add review",
+                "new_review_title": "Add new review"
+            }
         },
         "compare_list": {
             "add_to_compare": "Add to compare",
@@ -851,6 +862,5 @@
         "customer_password_confirmation": "Password confirmation is invalid or required",
         "customer_token": "Code is invalid or required",
         "customer_email": "Email is invalid or required"
-       
     }
 }

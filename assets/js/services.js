@@ -37,6 +37,14 @@ storefrontApp.service('customerService', ['$http', function ($http) {
     }
 }]);
 
+storefrontApp.service('customerReviewService', ['$http', function ($http) {
+    return {
+        addCustomerReview: function (review) {
+            return $http.post('storefrontapi/customerreviews/review', review);
+        }
+    }
+}]);
+
 storefrontApp.service('marketingService', ['$http', function ($http) {
     return {
         getDynamicContent: function (placeName) {
@@ -108,6 +116,9 @@ storefrontApp.service('catalogService', ['$http', function($http, $localStorage)
         },
         searchCategories: function (criteria) {
             return $http.post('storefrontapi/categories/search', criteria);
+        },
+        getProductRating: function(productIds){
+            return $http.get('storefrontapi/CustomerReviews?productIds=' + productIds);
         }
     }
 }]);

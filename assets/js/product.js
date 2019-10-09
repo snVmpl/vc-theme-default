@@ -1,7 +1,8 @@
+/* eslint-disable angular/controller-name */
 var storefrontApp = angular.module('storefrontApp');
 
-storefrontApp.controller('productController', ['$rootScope', '$scope', '$window', 'dialogService', 'catalogService', 'cartService', 'quoteRequestService', 'customerService', 'listService', '$localStorage',
-    function ($rootScope, $scope, $window, dialogService, catalogService, cartService, quoteRequestService, customerService, listService, $localStorage) {
+storefrontApp.controller('productController', ['$rootScope', '$scope', '$window', 'dialogService', 'catalogService', 'cartService', 'quoteRequestService', 'customerReviewService',
+    function ($rootScope, $scope, $window, dialogService, catalogService, cartService, quoteRequestService, customerReviewService) {
         //TODO: prevent add to cart not selected variation
         // display validator please select property
         // display price range
@@ -15,6 +16,37 @@ storefrontApp.controller('productController', ['$rootScope', '$scope', '$window'
         $scope.addToWishlistDisabled = false;
         $scope.availableLists = null;
         $scope.listType = null;
+        $scope.starsLimit = [1, 2, 3, 4, 5];
+        $scope.newReview = {};
+
+        $scope.getStarClass = function (i) {
+            var rating = $scope.selectedVariation.rating;
+            if ((rating - i) >= 0.3 && (rating - i) <= 0.7) {
+                return 'fa-star-half-o active-star';
+            }
+            if (i <= rating) {
+                return 'fa-star active-star';
+            }
+            return 'fa-star-o';
+        };
+
+        $scope.starClick = function (index) {
+            $scope.newReview.rating = index;
+            $scope.newReview.ratingNumber = index;
+        };
+
+        $scope.addCustomerReview = function () {
+            $scope.newReview.isActive = true;
+            $scope.newReview.productId = $scope.selectedVariation.id;
+            $scope.newReview.createdDate = new Date();
+            customerReviewService.addCustomerReview($scope.newReview).then(function (response) {
+                if (response.status == 200) {
+                    alert("Review added");
+                    initialize();
+                    $scope.newReview = {};
+                }
+            })
+        };
 
         $scope.addProductToCart = function (product, quantity) {
             var dialogData = toDialogDataModel(product, quantity);
@@ -44,8 +76,8 @@ storefrontApp.controller('productController', ['$rootScope', '$scope', '$window'
                 $rootScope.$broadcast('actualQuoteRequestItemsChanged');
             });
         };
-        
-        $scope.initAvailableLists = function(lists) {
+
+        $scope.initAvailableLists = function (lists) {
             $scope.listType = lists.default_list_type;
         }
 
